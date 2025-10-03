@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exoplanet Discovery Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo">
+      <i class="fas fa-planet-moon logo-icon"></i>
+      <h1>Austro 4</h1>
+    </div>
+  </header>
+
+  <div class="title-section">
+    <h2>Exoplanet Discovery Dashboard</h2>
+    <p>Advanced machine learning predictions for exoplanet detection and classification</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-title">Total Detections</div>
+      <div class="stat-value">{{ total }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-title">Confirmed Exoplanets</div>
+      <div class="stat-value">{{ confirmed }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-title">Planet Candidates</div>
+      <div class="stat-value">{{ candidates }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-title">False Positives</div>
+      <div class="stat-value">{{ false }}</div>
+    </div>
+  </div>
+
+  <!-- Filter Buttons -->
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">All Detections ({{ total }})</button>
+    <button class="filter-btn" data-filter="confirmed">Confirmed ({{ confirmed }})</button>
+    <button class="filter-btn" data-filter="candidates">Candidates ({{ candidates }})</button>
+    <button class="filter-btn" data-filter="false">False Positives ({{ false }})</button>
+  </div>
+
+  <!-- Dynamic Exoplanet Cards -->
+  <div class="exoplanets-grid">
+    {% for planet in exoplanets %}
+      <div class="exoplanet-card" data-status="{{ planet.status }}">
+        <div class="card-header">
+          <h3 class="card-title">{{ planet.name }}</h3>
+          <p class="card-subtitle">{{ planet.id }}</p>
+        </div>
+        <div class="card-body">
+          <div class="confidence-meter">
+            <div class="confidence-label">Detection Confidence</div>
+            {% set conf_class = "high-confidence" if planet.confidence > 80 else ("medium-confidence" if planet.confidence > 50 else "low-confidence") %}
+            <div class="confidence-value {{ conf_class }}">{{ planet.confidence }}%</div>
+            <div class="confidence-bar">
+              <div class="confidence-fill {{ conf_class }}" style="width: {{ planet.confidence }}%"></div>
+            </div>
+          </div>
+          <div class="details-grid">
+            <div class="detail-item">
+              <div class="detail-label">Method:</div>
+              <div class="detail-value">{{ planet.method }}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Magnitude:</div>
+              <div class="detail-value">{{ planet.magnitude }}</div>
+            </div>
+            {% if planet.period %}
+            <div class="detail-item">
+              <div class="detail-label">Orbital Period:</div>
+              <div class="detail-value">{{ planet.period }}</div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="dataset">Dataset: {{ planet.dataset }}</div>
+          <div class="date">Analysed: {{ planet.date }}</div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
